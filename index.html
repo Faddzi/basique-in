@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=6">
+  <link rel="stylesheet" href="/styles.css?v=7">
 
   <script type="application/ld+json">
   {
@@ -60,6 +60,11 @@
 
   <header class="header" id="header">
     <div class="header__inner">
+      <nav class="header__nav" aria-label="Collection">
+        <a href="#tee">Tees</a>
+        <a href="#denim">Denim</a>
+        <a href="#shirt">Shirts</a>
+      </nav>
       <a class="header__name" href="/" aria-label="Basique home">Basique</a>
       <a class="header__link" href="#waitlist">Waitlist</a>
     </div>
@@ -91,12 +96,10 @@
 
     <div class="ticker" aria-hidden="true">
       <div class="ticker__track">
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
-        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>Made for India</span><i></i>
+        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>The Chino</span><i></i><span>The Polo</span><i></i><span>The Overshirt</span><i></i><span>The Henley</span><i></i>
+        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>The Chino</span><i></i><span>The Polo</span><i></i><span>The Overshirt</span><i></i><span>The Henley</span><i></i>
+        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>The Chino</span><i></i><span>The Polo</span><i></i><span>The Overshirt</span><i></i><span>The Henley</span><i></i>
+        <span>The Tee</span><i></i><span>The Denim</span><i></i><span>The Oxford Shirt</span><i></i><span>The Chino</span><i></i><span>The Polo</span><i></i><span>The Overshirt</span><i></i><span>The Henley</span><i></i>
       </div>
     </div>
 
@@ -106,49 +109,33 @@
       </div>
 
       <div class="products" role="list">
-        <article class="product reveal" role="listitem">
+        <article class="product reveal" role="listitem" id="tee">
           <div class="product__media">
             <img src="https://images.pexels.com/photos/11671964/pexels-photo-11671964.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000" srcset="https://images.pexels.com/photos/11671964/pexels-photo-11671964.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=480&amp;h=600 480w, https://images.pexels.com/photos/11671964/pexels-photo-11671964.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000 800w, https://images.pexels.com/photos/11671964/pexels-photo-11671964.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1200&amp;h=1500 1200w" sizes="(max-width:734px) 78vw, 33vw" alt="White cotton tee on a hanger" width="800" height="1000" loading="lazy" decoding="async">
           </div>
           <div class="product__info">
             <h3>The Tee</h3>
             <p>Dense, soft cotton. A collar that keeps its shape.</p>
-            <ul class="swatches" aria-label="Colours">
-              <li style="--c:#f4f1ea" title="Off white"></li>
-              <li style="--c:#0f1b33" title="Navy"></li>
-              <li style="--c:#1a1a1a" title="Black"></li>
-              <li style="--c:#c8102e" title="Red"></li>
-            </ul>
           </div>
         </article>
 
-        <article class="product reveal" role="listitem">
+        <article class="product reveal" role="listitem" id="denim">
           <div class="product__media">
             <img src="https://images.pexels.com/photos/6764122/pexels-photo-6764122.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000" srcset="https://images.pexels.com/photos/6764122/pexels-photo-6764122.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=480&amp;h=600 480w, https://images.pexels.com/photos/6764122/pexels-photo-6764122.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000 800w, https://images.pexels.com/photos/6764122/pexels-photo-6764122.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1200&amp;h=1500 1200w" sizes="(max-width:734px) 78vw, 33vw" alt="Stack of folded blue denim jeans" width="800" height="1000" loading="lazy" decoding="async">
           </div>
           <div class="product__info">
             <h3>The Denim</h3>
             <p>Straight, honest cuts. Built to fade in, not fall apart.</p>
-            <ul class="swatches" aria-label="Washes">
-              <li style="--c:#1d2c4f" title="Rinse"></li>
-              <li style="--c:#2f4a7a" title="Mid wash"></li>
-              <li style="--c:#7d97c0" title="Light wash"></li>
-            </ul>
           </div>
         </article>
 
-        <article class="product reveal" role="listitem">
+        <article class="product reveal" role="listitem" id="shirt">
           <div class="product__media">
             <img src="https://images.pexels.com/photos/9558253/pexels-photo-9558253.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000" srcset="https://images.pexels.com/photos/9558253/pexels-photo-9558253.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=480&amp;h=600 480w, https://images.pexels.com/photos/9558253/pexels-photo-9558253.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=800&amp;h=1000 800w, https://images.pexels.com/photos/9558253/pexels-photo-9558253.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1200&amp;h=1500 1200w" sizes="(max-width:734px) 78vw, 33vw" alt="Light blue oxford shirt on a hanger" width="800" height="1000" loading="lazy" decoding="async">
           </div>
           <div class="product__info">
             <h3>The Oxford Shirt</h3>
             <p>Crisp, breathable and easy. Smart enough for anything.</p>
-            <ul class="swatches" aria-label="Colours">
-              <li style="--c:#cfdcef" title="Blue"></li>
-              <li style="--c:#fbfbf8" title="White"></li>
-              <li style="--c:#e9dcc4" title="Stone"></li>
-            </ul>
           </div>
         </article>
       </div>
