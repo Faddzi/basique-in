@@ -1,5 +1,3 @@
-// Cloudflare Pages Function: POST /api/subscribe
-// Requires a KV namespace bound as WAITLIST in the Pages project settings.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const json = (body, status = 200) =>
@@ -14,7 +12,6 @@ export async function onRequestPost({ request, env }) {
   let data;
   try { data = await request.json(); } catch { return json({ ok: false, error: 'Invalid request.' }, 400); }
 
-  // Honeypot: bots fill hidden field. Pretend success.
   if (data.company) return json({ ok: true });
 
   const email = String(data.email || '').trim().toLowerCase().slice(0, 254);
