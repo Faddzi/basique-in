@@ -1,95 +1,59 @@
 (() => {
-  const root = document.documentElement;
-  root.classList.add('js');
+  document.documentElement.classList.add('js');
   const yr = document.getElementById('yr');
   if (yr) yr.textContent = new Date().getFullYear();
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Nav hairline on scroll
-  const nav = document.getElementById('nav');
-  // Hero stack + statement words are scroll-linked
-  const stack = document.querySelector('.stack');
-  const statement = document.querySelector('[data-words]');
-  let words = [];
+  setTimeout(() => {
+    document.querySelector('.curtain')?.remove();
+    document.body.classList.remove('is-loading');
+  }, reduce ? 0 : 1600);
 
-  if (statement) {
-    const text = statement.textContent.trim().replace(/\s+/g, ' ');
-    statement.setAttribute('aria-label', text);
-    statement.innerHTML = text.split(' ').map((w) => '<span class="w" aria-hidden="true">' + w + '</span>').join(' ');
-    words = [...statement.querySelectorAll('.w')];
+  const wm = document.querySelector('.wordmark');
+  const chars = wm ? [...wm.querySelectorAll('.ch')] : [];
+  setTimeout(() => wm && wm.classList.add('is-ready'), reduce ? 0 : 3300);
+
+  if (!reduce && window.matchMedia('(hover: hover)').matches && wm) {
+    let raf = 0;
+    window.addEventListener('pointermove', (e) => {
+      if (!wm.classList.contains('is-ready')) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        chars.forEach((c) => {
+          const r = c.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          const d = Math.hypot(e.clientX - cx, (e.clientY - cy) * 1.4);
+          const w = Math.max(70, Math.min(125, 125 - d / 6));
+          c.style.setProperty('--w', w.toFixed(1));
+        });
+      });
+    });
+    wm.closest('.hero').addEventListener('pointerleave', () => chars.forEach((c) => c.style.setProperty('--w', 100)));
   }
 
-  if (stack) setTimeout(() => stack.classList.add('is-live'), reduce ? 0 : 2100);
-
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const y = window.scrollY;
-    const vh = window.innerHeight;
-    nav && nav.classList.toggle('is-scrolled', y > 8);
-
-    if (reduce) return;
-
-    if (stack && stack.classList.contains('is-live')) {
-      const r = stack.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height) * 1.6 - 0.25));
-      stack.style.setProperty('--p', p.toFixed(3));
-    }
-
-    if (words.length) {
-      const r = statement.getBoundingClientRect();
-      // Lights words as the paragraph travels from 85% to 35% of the viewport
-      const start = vh * 0.85, end = vh * 0.35;
-      const prog = Math.min(1, Math.max(0, (start - r.top) / (start - end + r.height * 0.6)));
-      const lit = Math.round(prog * words.length);
-      for (let i = 0; i < words.length; i++) words[i].classList.toggle('on', i < lit);
-    }
-  };
-  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
-  update();
-  setTimeout(update, reduce ? 0 : 2150);
-
-  // Reveal on scroll
-  const els = document.querySelectorAll('.reveal');
+  const els = document.querySelectorAll('.in-view');
   if ('IntersectionObserver' in window && !reduce) {
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (en.isIntersecting) { en.target.classList.add('shown'); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('shown'); io.unobserve(en.target); } });
+    }, { threshold: 0.15 });
     els.forEach((el) => io.observe(el));
   } else {
     els.forEach((el) => el.classList.add('shown'));
   }
 
-  // Waitlist form
   const form = document.getElementById('waitlist');
   if (!form) return;
-  const field = form.querySelector('.field');
-  const input = form.email;
-  const btn = form.querySelector('.field__btn');
-  const note = form.querySelector('.form__note');
-  const defaultNote = note.textContent;
-  const setNote = (msg, cls) => { note.textContent = msg; note.className = 'form__note' + (cls ? ' ' + cls : ''); };
-
-  input.addEventListener('input', () => {
-    if (field.classList.contains('is-error')) { field.classList.remove('is-error'); setNote(defaultNote); }
-  });
+  const note = form.querySelector('.waitlist__note');
+  const btn = form.querySelector('button');
+  const label = btn.querySelector('.btn__label');
+  const setNote = (msg, cls) => { note.textContent = msg; note.className = 'waitlist__note ' + (cls || ''); };
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = input.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      field.classList.add('is-error');
-      setNote('Please enter a valid email address.', 'err');
-      input.focus();
-      return;
-    }
-    btn.disabled = true;
-    setNote('Joining…');
+    const email = form.email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setNote('Please enter a valid email address.', 'err'); form.email.focus(); return; }
+    btn.disabled = true; label.textContent = 'Joining…';
     try {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
@@ -97,13 +61,14 @@
         body: JSON.stringify({ email, company: form.company.value, source: location.search || 'direct' })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
-      form.classList.add('is-done');
-      input.blur();
-      setNote(data.existing ? 'You’re already on the list. We’ll be in touch.' : 'You’re in. We’ll email you before launch.', 'ok');
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong');
+      form.classList.add('done');
+      label.textContent = 'You’re in';
+      form.email.value = '';
+      setNote(data.existing ? 'You’re already on the list. We’ll be in touch.' : 'Welcome to Basique. You’ll hear from us first.', 'ok');
     } catch (err) {
-      btn.disabled = false;
-      setNote(err.message, 'err');
+      btn.disabled = false; label.textContent = 'Join the waitlist';
+      setNote(err.message || 'Something went wrong. Please try again.', 'err');
     }
   });
 })();
