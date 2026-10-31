@@ -153,11 +153,6 @@ em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:40
   clip-path:polygon(34% 3%,42% 3%,50% 14%,58% 3%,66% 3%,90% 12%,99% 72%,87% 74%,79% 32%,79% 100%,21% 100%,21% 32%,13% 74%,1% 72%,10% 12%)}
 .garment--shirt::after{left:50%;top:22%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#fff;box-shadow:0 14px 0 #fff,0 28px 0 #fff,0 42px 0 #fff,0 56px 0 #fff}
 
-.promise{max-width:var(--wrap);margin:0 auto;padding:0 var(--pad-r) clamp(88px,12vw,160px) var(--pad-l);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(28px,4vw,56px)}
-.promise__item{border-top:1.5px solid var(--navy);padding-top:22px}
-.promise__num{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--red)}
-.promise__item h3{margin-top:10px;font-size:clamp(24px,2.4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--navy);font-variation-settings:"wdth" 90}
-.promise__item p{margin-top:10px;color:var(--muted);line-height:1.55}
 
 .cta{background:var(--navy);color:var(--cream);text-align:center;padding:clamp(88px,12vw,150px) var(--pad-r) clamp(80px,10vw,130px) var(--pad-l)}
 .cta__inner{max-width:880px;margin:0 auto}
@@ -172,8 +167,8 @@ em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:40
 
 .js .reveal{opacity:0;transform:translateY(36px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
 .js .reveal.shown{opacity:1;transform:none}
-.js .products .product:nth-child(2),.js .promise__item:nth-child(2){transition-delay:.08s}
-.js .products .product:nth-child(3),.js .promise__item:nth-child(3){transition-delay:.16s}
+.js .products .product:nth-child(2){transition-delay:.08s}
+.js .products .product:nth-child(3){transition-delay:.16s}
 
 @media (max-width:1068px){
   .products{gap:16px}
@@ -198,7 +193,6 @@ em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:40
   .products::-webkit-scrollbar{display:none}
   .product{flex:0 0 min(78vw,320px);scroll-snap-align:start}
   .js .products .product.reveal{opacity:1;transform:none;transition:none}
-  .promise{grid-template-columns:1fr;gap:36px}
   .footer__row{flex-direction:column}
 }
 
