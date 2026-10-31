@@ -1,74 +1,95 @@
 (() => {
   document.documentElement.classList.add('js');
-  const yr = document.getElementById('yr');
-  if (yr) yr.textContent = new Date().getFullYear();
+  document.querySelectorAll('.year').forEach((el) => { el.textContent = new Date().getFullYear(); });
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   setTimeout(() => {
-    document.querySelector('.curtain')?.remove();
+    const curtain = document.querySelector('.curtain');
+    if (curtain) curtain.remove();
     document.body.classList.remove('is-loading');
   }, reduce ? 0 : 1600);
 
-  const wm = document.querySelector('.wordmark');
-  const chars = wm ? [...wm.querySelectorAll('.ch')] : [];
-  setTimeout(() => wm && wm.classList.add('is-ready'), reduce ? 0 : 3300);
+  const header = document.getElementById('header');
+  const onScroll = () => { if (header) header.classList.toggle('is-stuck', header.getBoundingClientRect().top <= 0 && window.scrollY > 40); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  if (!reduce && window.matchMedia('(hover: hover)').matches && wm) {
-    let raf = 0;
+  const wordmark = document.querySelector('.wordmark');
+  const letters = wordmark ? Array.from(wordmark.querySelectorAll('.ch')) : [];
+  setTimeout(() => { if (wordmark) wordmark.classList.add('is-ready'); }, reduce ? 0 : 3300);
+
+  if (!reduce && wordmark && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let frame = 0;
     window.addEventListener('pointermove', (e) => {
-      if (!wm.classList.contains('is-ready')) return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        chars.forEach((c) => {
-          const r = c.getBoundingClientRect();
-          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-          const d = Math.hypot(e.clientX - cx, (e.clientY - cy) * 1.4);
-          const w = Math.max(70, Math.min(125, 125 - d / 6));
-          c.style.setProperty('--w', w.toFixed(1));
+      if (!wordmark.classList.contains('is-ready')) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        letters.forEach((letter) => {
+          const r = letter.getBoundingClientRect();
+          const d = Math.hypot(e.clientX - (r.left + r.width / 2), (e.clientY - (r.top + r.height / 2)) * 1.4);
+          letter.style.setProperty('--w', Math.max(70, Math.min(125, 125 - d / 6)).toFixed(1));
         });
       });
     });
-    wm.closest('.hero').addEventListener('pointerleave', () => chars.forEach((c) => c.style.setProperty('--w', 100)));
+    wordmark.closest('.hero').addEventListener('pointerleave', () => letters.forEach((letter) => letter.style.setProperty('--w', 100)));
   }
 
-  const els = document.querySelectorAll('.in-view');
+  const revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduce) {
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('shown'); io.unobserve(en.target); } });
-    }, { threshold: 0.15 });
-    els.forEach((el) => io.observe(el));
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { entry.target.classList.add('shown'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach((el) => io.observe(el));
   } else {
-    els.forEach((el) => el.classList.add('shown'));
+    revealEls.forEach((el) => el.classList.add('shown'));
   }
 
-  const form = document.getElementById('waitlist');
-  if (!form) return;
-  const note = form.querySelector('.waitlist__note');
-  const btn = form.querySelector('button');
-  const label = btn.querySelector('.btn__label');
-  const setNote = (msg, cls) => { note.textContent = msg; note.className = 'waitlist__note ' + (cls || ''); };
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = form.email.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setNote('Please enter a valid email address.', 'err'); form.email.focus(); return; }
-    btn.disabled = true; label.textContent = 'Joining…';
-    try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, company: form.company.value, source: location.search || 'direct' })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong');
-      form.classList.add('done');
-      label.textContent = 'You’re in';
-      form.email.value = '';
-      setNote(data.existing ? 'You’re already on the list. We’ll be in touch.' : 'Welcome to Basique. You’ll hear from us first.', 'ok');
-    } catch (err) {
-      btn.disabled = false; label.textContent = 'Join the waitlist';
-      setNote(err.message || 'Something went wrong. Please try again.', 'err');
-    }
+  document.querySelectorAll('.signup').forEach((form) => {
+    const input = form.querySelector('input[type=email]');
+    const button = form.querySelector('button');
+    const label = form.querySelector('.signup__label');
+    const note = form.querySelector('.signup__note');
+    const defaultNote = note.textContent;
+    const setNote = (msg, cls) => { note.textContent = msg; note.className = 'signup__note' + (cls ? ' ' + cls : ''); };
+
+    input.addEventListener('input', () => {
+      if (form.classList.contains('is-error')) { form.classList.remove('is-error'); setNote(defaultNote); }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!EMAIL.test(email)) {
+        form.classList.add('is-error');
+        setNote('Please enter a valid email address.', 'err');
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      label.textContent = 'Joining…';
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, company: form.company.value, source: location.search || 'direct' })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+        form.classList.add('is-done');
+        label.textContent = 'You’re in';
+        input.value = '';
+        input.blur();
+        setNote(data.existing ? 'You’re already on the list. We’ll be in touch.' : 'Welcome to Basique. You’ll hear from us first.', 'ok');
+      } catch (err) {
+        button.disabled = false;
+        label.textContent = 'Join the waitlist';
+        setNote(err.message, 'err');
+      }
+    });
   });
 })();
